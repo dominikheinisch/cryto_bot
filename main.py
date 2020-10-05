@@ -6,21 +6,14 @@ from datetime import datetime
 from database import db
 
 
-def get_data(symbol, category, since):
+def get_data(ticker, category, since):
     session = requests.Session()
-    data = session.get(f'https://bitbay.net/API/Public/{symbol}/{category}.json?since={since}')
-    return data.json(), symbol
-
-def get_trades(symbol, since):
-    return get_data(symbol=symbol, category='trades', since=since)
+    data = session.get(f'https://bitbay.net/API/Public/{ticker}/{category}.json?since={since}')
+    return data.json()
 
 
-def trade_data(row):
-    tid = row['tid']
-    date = row['date']
-    price = row['price']
-    amount = row['amount']
-    return tid, date, price, amount
+def get_trade_data(row):
+    return row['tid'], row['date'], row['price'], row['amount']
 
 
 def process_ticker(db, ticker):
@@ -30,54 +23,51 @@ def process_ticker(db, ticker):
             [ticker]
         ).fetchone()
     ids = get_ticker_id(db)
-    if ids:
-        return ids[0]
-    else:
+    if not ids:
         db.execute(
             'INSERT INTO tickers (ticker, is_synthetic) VALUES (?, ?)',
             [ticker, 0]
         )
         db.commit()
-        return get_ticker_id(db)[0]
+        ids = get_ticker_id(db)
+    return ids[0]
 
 
 def process_data(db, data, ticker_id):
-    row = trade_data(data[0])
-    print(*row, datetime.fromtimestamp(row[2]).strftime("%d.%m.%Y %I:%M:%S"), ticker_id)
+    row = get_trade_data(data[0])
+    print(*row, datetime.fromtimestamp(row[1]).strftime("%d.%m.%Y %I:%M:%S"), ticker_id)
     start_time = time.time()
     db.executemany(
         'INSERT INTO trades (tid, date_, price, amount, ticker_id) VALUES (?, ?, ?, ?, ?)',
-        [[*trade_data(row), ticker_id] for row in data]
+        [[*get_trade_data(row), ticker_id] for row in data]
     )
     db.commit()
     print('commit', time.time() - start_time)
+
 
 def get_last_transaction_tid(db, ticker_id):
     id = db.execute(
         'SELECT MAX(tid) FROM trades WHERE ticker_id = (?)',
         [ticker_id]
     ).fetchone()
-    if id[0]:
-        return id[0]
-    else:
-        return -1
+    return id[0] if id[0] else -1
 
 
-def pull_trades(db, symbol):
-    TRADES_SIZE = 50
-    ticker_id = process_ticker(db, ticker=symbol)
+def pull_trades(db, ticker, TRADES_SIZE=50):
+    ticker_id = process_ticker(db, ticker=ticker)
     tid_since = get_last_transaction_tid(db, ticker_id)
-    is_empty = False
+
     start_time = time.time()
-    while(not is_empty):
-        data, symbol = get_data(symbol=symbol, category='trades', since=tid_since)
+    data = get_data(ticker=ticker, category='trades', since=tid_since)
+    while(data):
         process_data(db, data, ticker_id)
-        is_empty = not len(data)
         tid_since += TRADES_SIZE
         print(time.time() - start_time)
+        data = get_data(ticker=ticker, category='trades', since=tid_since)
 
-def pull_all_trades(db, symbols=['btcpln', 'lskpln']):
-    [pull_trades(db, symbol) for symbol in symbols]
+
+def pull_all_trades(db, tickers=['btcpln', 'lskpln', 'bccpln', 'ltcpln']):
+    [pull_trades(db, ticker) for ticker in tickers]
 
 
 @click.group()
@@ -93,14 +83,12 @@ def init_db():
 @cli.command()
 def run_puller():
     with db.get_db() as _db:
-        def run():
-            while(True):
-                try:
-                    pull_all_trades(_db)
-                    time.sleep(30)
-                except:
-                    run()
-        run()
+        while(True):
+            try:
+                pull_all_trades(_db)
+                time.sleep(30)
+            except Exception as e:
+                print(e)
 
 
 if __name__ == '__main__':
