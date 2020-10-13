@@ -2,7 +2,7 @@ import click
 import time
 
 from database import db
-from puller.controller import run
+from puller.controller import Puller
 
 
 @click.group()
@@ -30,4 +30,4 @@ def fetch_btc_pln():
 
 @commands_group.command()
 def run_puller():
-    run()
+    Puller().run()

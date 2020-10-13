@@ -1,66 +1,70 @@
 import requests
 import time
 from datetime import datetime
-from typing import List
 
-import puller.queries as queries
+from puller.queries import Queries
 from database import db
 
 
-def get_data(ticker, category, since):
-    session = requests.Session()
-    data = session.get(f'https://bitbay.net/API/Public/{ticker}/{category}.json?since={since}')
-    return data.json()
+class Puller:
+    TICKERS = ['btcpln', 'lskpln', 'bccpln', 'ltcpln', 'omgpln', 'xrppln', 'ethpln', 'btgpln', 'trxpln',]
+
+    def __init__(self):
+        self.queries = None
+
+    def run(self):
+        with db.get_db() as _db:
+            self.queries = Queries(_db)
+            while(True):
+                try:
+                    self.pull_trades()
+                    time.sleep(30)
+                except Exception as e:
+                    print(e)
+
+    def pull_trades(self):
+        [TickerTrades(self.queries, ticker).pull_trades() for ticker in self.TICKERS]
 
 
-def get_trade_data(row):
-    return row['tid'], row['date'], row['price'], row['amount']
+class TickerTrades:
+    TRADES_SIZE = 50
 
+    def __init__(self, queries: Queries, ticker: str):
+        self.queries = queries
+        self.ticker = ticker
+        self.ticker_id = self.process_ticker(ticker)
+        self.tid_since = self.get_last_transaction_tid()
+        self.data = None
 
-def process_ticker(db, ticker):
-    ids = queries.select_id_by_ticker(db, ticker)
-    if not ids:
-        queries.insert_ticker(db, ticker)
-        ids = queries.select_id_by_ticker(db, ticker)
-    return ids[0]
+    def process_ticker(self, ticker) -> int:
+        ids = self.queries.select_id_by_ticker(ticker)
+        if not ids:
+            self.queries.insert_ticker(ticker)
+            ids = self.queries.select_id_by_ticker(ticker)
+        return ids[0]
 
+    def get_last_transaction_tid(self) -> int:
+        id = self.queries.select_last_transaction_tid(self.ticker_id)
+        return id[0] if id[0] else -1
 
-def process_data(db, data, ticker_id):
-    row = get_trade_data(data[0])
-    print(*row, datetime.fromtimestamp(row[1]).strftime("%d.%m.%Y %I:%M:%S"), ticker_id)
-    start_time = time.time()
-    queries.insert_trade(db, bulk_values=[[*get_trade_data(row), ticker_id] for row in data])
-    print('commit', time.time() - start_time)
+    def pull_trades(self):
+        start_time = time.time()
+        while (self.get_data()):
+            self.process_data(self.data)
+            self.tid_since += self.TRADES_SIZE
+            print(time.time() - start_time)
 
+    def get_data(self, category='trades'):
+        session = requests.Session()
+        data = session.get(f'https://bitbay.net/API/Public/{self.ticker}/{category}.json?since={self.tid_since}')
+        self.data = data.json()
+        return self.data
 
-def get_last_transaction_tid(db, ticker_id):
-    id = queries.select_last_transaction_tid(db, ticker_id)
-    return id[0] if id[0] else -1
-
-
-def pull_trades(db, ticker: str, TRADES_SIZE: int=50):
-    ticker_id = process_ticker(db, ticker=ticker)
-    tid_since = get_last_transaction_tid(db, ticker_id)
-
-    start_time = time.time()
-    data = get_data(ticker=ticker, category='trades', since=tid_since)
-    while(data):
-        process_data(db, data, ticker_id)
-        tid_since += TRADES_SIZE
-        print(time.time() - start_time)
-        data = get_data(ticker=ticker, category='trades', since=tid_since)
-
-
-def pull_all_trades(db, tickers: List[str]=[
-        'btcpln', 'lskpln', 'bccpln', 'ltcpln', 'omgpln', 'xrppln', 'ethpln', 'btgpln', 'trxpln',]):
-    [pull_trades(db, ticker) for ticker in tickers]
-
-
-def run():
-    with db.get_db() as _db:
-        while(True):
-            try:
-                pull_all_trades(_db)
-                time.sleep(30)
-            except Exception as e:
-                print(e)
+    def process_data(self, data):
+        def get_trade_data(row):
+            return row['tid'], row['date'], row['price'], row['amount']
+        row = get_trade_data(data[0])
+        print(*row, datetime.fromtimestamp(row[1]).strftime("%d.%m.%Y %I:%M:%S"), self.ticker)
+        start_time = time.time()
+        self.queries.insert_trade(bulk_values=[[*get_trade_data(row), self.ticker_id] for row in data])
+        print('commit', time.time() - start_time)
