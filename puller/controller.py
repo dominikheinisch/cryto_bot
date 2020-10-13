@@ -3,6 +3,7 @@ import time
 from datetime import datetime
 from typing import List
 
+import puller.queries as queries
 from database import db
 
 
@@ -17,19 +18,10 @@ def get_trade_data(row):
 
 
 def process_ticker(db, ticker):
-    def get_ticker_id(db):
-        return db.execute(
-            'SELECT id FROM tickers WHERE ticker = (?)',
-            [ticker]
-        ).fetchone()
-    ids = get_ticker_id(db)
+    ids = queries.select_id_by_ticker(db, ticker)
     if not ids:
-        db.execute(
-            'INSERT INTO tickers (ticker, is_synthetic) VALUES (?, ?)',
-            [ticker, 0]
-        )
-        db.commit()
-        ids = get_ticker_id(db)
+        queries.insert_ticker(db, ticker)
+        ids = queries.select_id_by_ticker(db, ticker)
     return ids[0]
 
 
@@ -37,19 +29,12 @@ def process_data(db, data, ticker_id):
     row = get_trade_data(data[0])
     print(*row, datetime.fromtimestamp(row[1]).strftime("%d.%m.%Y %I:%M:%S"), ticker_id)
     start_time = time.time()
-    db.executemany(
-        'INSERT INTO trades (tid, date_, price, amount, ticker_id) VALUES (?, ?, ?, ?, ?)',
-        [[*get_trade_data(row), ticker_id] for row in data]
-    )
-    db.commit()
+    queries.insert_trade(db, bulk_values=[[*get_trade_data(row), ticker_id] for row in data])
     print('commit', time.time() - start_time)
 
 
 def get_last_transaction_tid(db, ticker_id):
-    id = db.execute(
-        'SELECT MAX(tid) FROM trades WHERE ticker_id = (?)',
-        [ticker_id]
-    ).fetchone()
+    id = queries.select_last_transaction_tid(db, ticker_id)
     return id[0] if id[0] else -1
 
 
@@ -66,7 +51,8 @@ def pull_trades(db, ticker: str, TRADES_SIZE: int=50):
         data = get_data(ticker=ticker, category='trades', since=tid_since)
 
 
-def pull_all_trades(db, tickers: List[str]=['btcpln', 'lskpln', 'bccpln', 'ltcpln', 'omgpln', 'xrppln', 'ethpln', 'btgpln']):
+def pull_all_trades(db, tickers: List[str]=[
+        'btcpln', 'lskpln', 'bccpln', 'ltcpln', 'omgpln', 'xrppln', 'ethpln', 'btgpln', 'trxpln',]):
     [pull_trades(db, ticker) for ticker in tickers]
 
 
