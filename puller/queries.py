@@ -8,14 +8,12 @@ class Queries:
             [ticker]
         ).fetchone()
 
-
     def insert_ticker(self, ticker, is_synthetic=0):
         self.db.execute(
             'INSERT INTO tickers (ticker, is_synthetic) VALUES (?, ?)',
             [ticker, is_synthetic]
         )
         self.db.commit()
-
 
     def insert_trade(self, bulk_values):
         self.db.executemany(
@@ -24,9 +22,15 @@ class Queries:
         )
         self.db.commit()
 
-
     def select_last_transaction_tid(self, ticker_id):
         return self.db.execute(
             'SELECT MAX(tid) FROM trades WHERE ticker_id = (?)',
             [ticker_id]
         ).fetchone()
+
+    def select_all_by_ticker(self, ticker):
+        id = self.select_id_by_ticker(ticker)
+        return self.db.execute(
+            'SELECT * FROM trades WHERE ticker_id = (?) ORDER BY tid ASC',
+            [id[0]]
+        ).fetchall()

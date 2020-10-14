@@ -1,4 +1,4 @@
-from puller.commands import commands_group
+from commands import commands_group
 
 
 if __name__ == '__main__':
