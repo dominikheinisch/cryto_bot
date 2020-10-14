@@ -7,7 +7,7 @@ from database import db
 
 
 class Puller:
-    TICKERS = ['btcpln', 'lskpln', 'bccpln', 'ltcpln', 'omgpln', 'xrppln', 'ethpln', 'btgpln', 'trxpln',]
+    TICKERS = ['btcpln', 'lskpln', 'bccpln', 'ltcpln', 'omgpln', 'xrppln', 'ethpln', 'btgpln', 'bsvpln', 'trxpln',]
 
     def __init__(self):
         self.queries = None
@@ -48,11 +48,9 @@ class TickerTrades:
         return id[0] if id[0] else -1
 
     def pull_trades(self):
-        start_time = time.time()
         while (self.get_data()):
             self.process_data(self.data)
             self.tid_since += self.TRADES_SIZE
-            print(time.time() - start_time)
 
     def get_data(self, category='trades'):
         session = requests.Session()
@@ -64,7 +62,5 @@ class TickerTrades:
         def get_trade_data(row):
             return row['tid'], row['date'], row['price'], row['amount']
         row = get_trade_data(data[0])
-        print(*row, datetime.fromtimestamp(row[1]).strftime("%d.%m.%Y %I:%M:%S"), self.ticker)
-        start_time = time.time()
+        print(self.ticker, datetime.fromtimestamp(row[1]).strftime("%d.%m.%Y %I:%M:%S"), data[0])
         self.queries.insert_trade(bulk_values=[[*get_trade_data(row), self.ticker_id] for row in data])
-        print('commit', time.time() - start_time)
