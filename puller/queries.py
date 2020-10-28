@@ -1,3 +1,5 @@
+from utils.func import named_timer
+
 class Queries:
     def __init__(self, db):
         self.db = db
@@ -28,6 +30,7 @@ class Queries:
             [ticker_id]
         ).fetchone()
 
+    @named_timer('fetching all by ticker')
     def select_all_by_ticker(self, ticker):
         id = self.select_id_by_ticker(ticker)
         return self.db.execute(
