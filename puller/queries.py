@@ -1,3 +1,4 @@
+from database.model import Trade
 from utils.func import named_timer
 
 class Queries:
@@ -33,7 +34,8 @@ class Queries:
     @named_timer('fetching all by ticker')
     def select_all_by_ticker(self, ticker):
         id = self.select_id_by_ticker(ticker)
-        return self.db.execute(
-            'SELECT * FROM trades WHERE ticker_id = (?) ORDER BY tid ASC',
-            [id[0]]
-        ).fetchall()
+        trades = self.db.execute(
+                'SELECT * FROM trades WHERE ticker_id = (?) ORDER BY tid ASC',
+                [id[0]]
+            ).fetchall()
+        return [Trade(*row) for row in trades]
