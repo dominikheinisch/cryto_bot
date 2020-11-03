@@ -23,6 +23,6 @@ python3 main.py prepare btcpln                 # btcpln, ethpln, btgpln, etc...
 
 ## 5. testing
 ```
-pytest -vs                                     # run all
-pytest -vs -m "not slow"                       # run all except slow tests
+python3 -m pytest -vs                                     # run all
+python3 -m pytest -vs -m "not slow"                       # run all except slow tests
 ```

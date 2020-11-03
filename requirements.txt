@@ -1,3 +1,5 @@
-requests == 2.19
 click
 numpy
+pytest
+pytest-mock
+requests
