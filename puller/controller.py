@@ -30,9 +30,10 @@ class TickerTrades:
     def __init__(self, queries: Queries, ticker: str):
         self._queries = queries
         self._ticker = ticker
-        self.ticker_id = self._process_ticker()
+        self.ticker_id = None
 
     def pull_trades(self):
+        self.ticker_id = self._process_ticker()
         tid_since = self._get_last_transaction_tid()
         data = self._pull_trades_batch(tid_since)
         while data:
