@@ -1,5 +1,6 @@
 from pytest_mock import mocker, MockerFixture
 
+import settings
 from puller.controller import Puller
 from puller.queries import Queries
 
@@ -28,10 +29,9 @@ def test_puller(mocker: MockerFixture) -> None:
     mocker.patch('puller.queries.Queries.select_last_transaction_tid', return_value=[0])
     mocker.patch('requests.Session.get', side_effect=[MockResp(), EmptyMockResp()])
 
-    puller = Puller()
-    puller.TICKERS = TICKERS
+    settings.TICKERS = TICKERS
     queries = Queries(mocker.Mock())
     spy = mocker.spy(queries, 'insert_trade')
 
-    puller._pull_trades(queries)
+    Puller()._pull_trades(queries)
     spy.assert_called_once_with(bulk_values=DATA_TO_INSERT)

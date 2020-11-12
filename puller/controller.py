@@ -2,13 +2,12 @@ from datetime import datetime
 from requests import Session
 from time import sleep
 
+import settings
 from puller.queries import Queries
 from database import db
 
 
 class Puller:
-    TICKERS = ['btcpln', 'lskpln', 'bccpln', 'ltcpln', 'omgpln', 'xrppln', 'ethpln', 'btgpln', 'bsvpln', 'trxpln',]
-
     def run(self):
         with db.get_db() as _db:
             queries = Queries(_db)
@@ -20,7 +19,7 @@ class Puller:
                     print(e)
 
     def _pull_trades(self, queries):
-        for ticker in self.TICKERS:
+        for ticker in settings.TICKERS:
             TickerTrades(queries, ticker).pull_trades()
 
 

@@ -1,6 +1,7 @@
+from os import path
 from time import time
 
-from utils.constants import Path
+import settings
 
 
 def named_timer(log_name=''):
@@ -14,5 +15,5 @@ def named_timer(log_name=''):
     return timer
 
 
-def ticker_to_path(ticker):
-    return f'{Path.DATASET_DIR}{ticker}.pkl'
+def ticker_to_path(ticker: str) -> str:
+    return path.join(settings.Datasets.DIR, f'{ticker}.pkl')
