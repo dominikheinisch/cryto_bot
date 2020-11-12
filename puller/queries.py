@@ -1,6 +1,7 @@
 from database.model import Trade
 from utils.func import named_timer
 
+
 class Queries:
     def __init__(self, db):
         self.db = db

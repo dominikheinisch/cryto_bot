@@ -1,4 +1,4 @@
-from pytest_mock import mocker, MockerFixture
+from pytest_mock import MockerFixture
 
 import settings
 from puller.controller import Puller
@@ -6,8 +6,8 @@ from puller.queries import Queries
 
 
 JSON_DATA = [
-    {"date":1,"price":33,"type":"sell","amount":0.011364,"tid":"1"},
-    {"date":2,"price":44,"type":"buy","amount":0.5,"tid":"2"},
+    {"date": 1, "price": 33, "type": "sell", "amount": 0.011364, "tid": "1"},
+    {"date": 2, "price": 44, "type": "buy", "amount": 0.5, "tid": "2"},
 ]
 TICKER_ID = 0
 DATA_TO_INSERT = [['1', 1, 33, 0.011364, TICKER_ID], ['2', 2, 44, 0.5, TICKER_ID]]

@@ -1,4 +1,5 @@
 click
+flake8
 numpy
 pytest
 pytest-mock

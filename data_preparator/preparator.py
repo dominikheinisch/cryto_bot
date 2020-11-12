@@ -56,7 +56,6 @@ class Preparator:
     def __filter_prices(self, filtered_trades):
         return np.asarray([trade.price for trade in filtered_trades])
 
-
     def __prepare_data_set(self, prices) -> dict:
         samples_begin = max(self.SEQUENCE) + 1
         y = prices[samples_begin:]
