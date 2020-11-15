@@ -1,8 +1,8 @@
 import pytest
 from os import path
 
-import settings
-from database.db import get_db
+import crypto_bot.settings as settings
+from crypto_bot.database.db import get_db
 
 
 @pytest.fixture

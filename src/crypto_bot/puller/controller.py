@@ -2,9 +2,9 @@ from datetime import datetime
 from requests import Session
 from time import sleep
 
-import settings
-from puller.queries import Queries
-from database import db
+import crypto_bot.settings as settings
+from crypto_bot.puller.queries import Queries
+from crypto_bot.database import db
 
 
 class Puller:

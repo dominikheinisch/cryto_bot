@@ -2,9 +2,9 @@ import numpy as np
 import pickle
 from datetime import datetime, timedelta
 
-from database import db
-from utils.func import named_timer, ticker_to_path
-from puller.queries import Queries
+from crypto_bot.database import db
+from crypto_bot.utils.func import named_timer, ticker_to_path
+from crypto_bot.puller.queries import Queries
 
 
 class TradeFilter:

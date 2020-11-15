@@ -1,4 +1,4 @@
-from commands import commands_group
+from crypto_bot.commands import commands_group
 
 
 if __name__ == '__main__':

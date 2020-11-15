@@ -1,8 +1,8 @@
 from pytest_mock import MockerFixture
 
-import settings
-from puller.controller import Puller
-from puller.queries import Queries
+import crypto_bot.settings as settings
+from crypto_bot.puller.controller import Puller
+from crypto_bot.puller.queries import Queries
 
 
 JSON_DATA = [
@@ -25,8 +25,8 @@ class EmptyMockResp():
 
 
 def test_puller(mocker: MockerFixture) -> None:
-    mocker.patch('puller.queries.Queries.select_id_by_ticker', return_value=[TICKER_ID])
-    mocker.patch('puller.queries.Queries.select_last_transaction_tid', return_value=[0])
+    mocker.patch('crypto_bot.puller.queries.Queries.select_id_by_ticker', return_value=[TICKER_ID])
+    mocker.patch('crypto_bot.puller.queries.Queries.select_last_transaction_tid', return_value=[0])
     mocker.patch('requests.Session.get', side_effect=[MockResp(), EmptyMockResp()])
 
     settings.TICKERS = TICKERS

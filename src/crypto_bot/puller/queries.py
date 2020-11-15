@@ -1,5 +1,5 @@
-from database.model import Trade
-from utils.func import named_timer
+from crypto_bot.database.model import Trade
+from crypto_bot.utils.func import named_timer
 
 
 class Queries:

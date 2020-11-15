@@ -1,6 +1,6 @@
 import sqlite3
 
-import settings
+import crypto_bot.settings as settings
 
 
 def get_db():
