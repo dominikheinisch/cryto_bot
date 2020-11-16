@@ -1,6 +1,5 @@
 from pytest_mock import MockerFixture
 
-import crypto_bot.settings as settings
 from crypto_bot.puller.controller import Puller
 from crypto_bot.puller.queries import Queries
 
@@ -29,9 +28,8 @@ def test_puller(mocker: MockerFixture) -> None:
     mocker.patch('crypto_bot.puller.queries.Queries.select_last_transaction_tid', return_value=[0])
     mocker.patch('requests.Session.get', side_effect=[MockResp(), EmptyMockResp()])
 
-    settings.TICKERS = TICKERS
     queries = Queries(mocker.Mock())
     spy = mocker.spy(queries, 'insert_trade')
 
-    Puller()._pull_trades(queries)
+    Puller()._pull_trades(queries, tickers=TICKERS)
     spy.assert_called_once_with(bulk_values=DATA_TO_INSERT)

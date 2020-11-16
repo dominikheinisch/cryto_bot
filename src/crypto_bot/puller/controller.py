@@ -8,18 +8,18 @@ from crypto_bot.database import db
 
 
 class Puller:
-    def run(self):
+    def run(self, tickers=settings.TICKERS):
         with db.get_db() as _db:
             queries = Queries(_db)
             while True:
                 try:
-                    self._pull_trades(queries)
+                    self._pull_trades(queries, tickers)
                     sleep(30)
                 except Exception as e:
                     print(e)
 
-    def _pull_trades(self, queries):
-        for ticker in settings.TICKERS:
+    def _pull_trades(self, queries, tickers):
+        for ticker in tickers:
             TickerTrades(queries, ticker).pull_trades()
 
 
