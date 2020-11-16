@@ -28,3 +28,8 @@ python3 -m crypto_bot prepare btgpln                      # btcpln, ethpln, btgp
 python3 -m pytest -vs                                     # run all
 python3 -m pytest -vs -m "not slow"                       # run all except slow tests
 ```
+
+## 6. pip installation
+```
+pip3 install -e git+https://github.com/dominikheinisch/cryto_bot@main#egg=cryto_bot
+```
