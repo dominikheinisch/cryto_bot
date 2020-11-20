@@ -1,3 +1,4 @@
+import numpy as np
 from datetime import datetime, timedelta
 
 
@@ -15,15 +16,15 @@ class TradeFilter:
 
     def filter(self):
         self.__timestamp_sec = self.__get_first_timestamp(self.__trades[0].datetime)
-        return self.__get_trade_per_batch()
+        return self.__get_price_per_batch()
 
     def __get_first_timestamp(self, datetime_: int) -> int:
         date_from_stamp = datetime.fromtimestamp(datetime_).strftime(self.DATE_PATTERN)
         timestamp_date = datetime.strptime(date_from_stamp, self.DATE_PATTERN) + self.__threshold_hour
         return (timestamp_date - self.DATE_0).total_seconds()
 
-    def __get_trade_per_batch(self):
-        return list(filter(lambda trade: self.__is_first_in_batch(trade.datetime), self.__trades))
+    def __get_price_per_batch(self):
+        return np.asarray([trade.price for trade in self.__trades if self.__is_first_in_batch(trade.datetime)])
 
     def __is_first_in_batch(self, datetime_: int) -> bool:
         if datetime_ >= self.__timestamp_sec:
