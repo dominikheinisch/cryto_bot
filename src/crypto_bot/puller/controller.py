@@ -58,5 +58,5 @@ class TickerTrades:
     def _process(self, data):
         def get_trade_data(row):
             return row['tid'], row['date'], row['price'], row['amount']
-        print(self._ticker, datetime.fromtimestamp(data[0]['date']).strftime("%d.%m.%Y %I:%M:%S"), data[0])
+        print(self._ticker, datetime.fromtimestamp(data[0]['date']).strftime('%Y-%m-%d %H:%M:%S'), data[0])
         self._queries.insert_trade(bulk_values=[[*get_trade_data(row), self.ticker_id] for row in data])
