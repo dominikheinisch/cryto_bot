@@ -1,6 +1,7 @@
 click
 flake8
 numpy
+pandas
 pytest
 pytest-mock
 requests

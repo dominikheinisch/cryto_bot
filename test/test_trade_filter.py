@@ -9,10 +9,7 @@ class TestTradeFilter():
     def test_one(self):
         run(input=[TRADE_1.Trade], result=[TRADE_1.price])
 
-    def test_one_ommit_due_to_threshold(self):
-        run(input=[TRADE_0.Trade], result=[])
-
-    def test_two_in_same_range(self):
+    def test_two_after_threshold(self):
         run(input=[TRADE_1.Trade, TRADE_2.Trade], result=[TRADE_1.price])
 
     def test_two_for_different_days(self):
@@ -21,19 +18,19 @@ class TestTradeFilter():
     def test_two_for_different_days_mixed_time(self):
         run(input=[TRADE_1.Trade, TRADE_4.Trade], result=[TRADE_1.price, TRADE_4.price])
 
-    def test_ommit_first(self):
-        run(input=[TRADE_0.Trade, TRADE_1.Trade], result=[TRADE_1.price])
+    def test_threshold_split(self):
+        run(input=[TRADE_0.Trade, TRADE_1.Trade], result=[TRADE_0.price, TRADE_1.price])
 
     def test_not_sorted(self):
         run(input=[TRADE_2.Trade, TRADE_1.Trade], result=[TRADE_2.price])
 
     def test_many(self):
         run(input=[TRADE_0.Trade, TRADE_1.Trade, TRADE_2.Trade, TRADE_3.Trade, TRADE_4.Trade],
-            result=[TRADE_1.price, TRADE_3.price, TRADE_4.price])
+            result=[TRADE_0.price, TRADE_1.price, TRADE_3.price])
 
 
 def run(input, result):
-    assert all(TradeFilter(input, threshold_hour_utc=THRESHOLD_HOUR).filter() == result)
+    assert all(TradeFilter(threshold_hour_utc=THRESHOLD_HOUR).filter(input) == result)
 
 
 def get_fake_trade(dtime: str, price: float):

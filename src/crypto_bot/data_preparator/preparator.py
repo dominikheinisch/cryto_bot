@@ -18,7 +18,7 @@ class Preparator:
         with db.get_db() as _db:
             queries = Queries(_db)
             self.__trades = queries.select_all_by_ticker(ticker)
-            prices = TradeFilter(self.__trades).filter()
+            prices = TradeFilter().filter(self.__trades)
             data_set = self.__prepare_data_set(prices)
             self.__save(data_set, ticker)
 
