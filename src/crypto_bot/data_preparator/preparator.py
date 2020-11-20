@@ -1,40 +1,10 @@
 import numpy as np
 import pickle
-from datetime import datetime, timedelta
 
 from crypto_bot.database import db
 from crypto_bot.utils.func import named_timer, ticker_to_path
 from crypto_bot.puller.queries import Queries
-
-
-class TradeFilter:
-    DAY_TO_SEC = 24 * 3600
-    DATE_0 = datetime(1970, 1, 1)
-    DATE_PATTERN = '%d.%m.%Y'
-    TRADE_HOUR = timedelta(hours=16)
-
-    def __init__(self, trades, sample_size=None):
-        self.__trades = trades
-        self.__timestamp_sec = None
-        self.__sample_size = sample_size if sample_size else self.DAY_TO_SEC
-
-    def filter(self):
-        self.__timestamp_sec = self.__get_first_timestamp(self.__trades[0].datetime)
-        return self.__get_trade_per_batch()
-
-    def __get_first_timestamp(self, date) -> int:
-        date_from_stamp = datetime.fromtimestamp(date).strftime(self.DATE_PATTERN)
-        timestamp_date = datetime.strptime(date_from_stamp, self.DATE_PATTERN) + self.TRADE_HOUR
-        return (timestamp_date - self.DATE_0).total_seconds()
-
-    def __get_trade_per_batch(self):
-        return list(filter(lambda trade: self.__is_first_in_batch(trade.datetime), self.__trades))
-
-    def __is_first_in_batch(self, datetime: int) -> bool:
-        if datetime > self.__timestamp_sec:
-            self.__timestamp_sec += self.__sample_size
-            return True
-        return False
+from crypto_bot.data_preparator.trade_filter import TradeFilter
 
 
 class Preparator:
