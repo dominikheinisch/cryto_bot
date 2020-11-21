@@ -13,14 +13,15 @@ class Preparator:
         with db.get_db() as _db:
             queries = Queries(_db)
             prices = TradeFilter().filter(queries.select_all_by_ticker(ticker))
-            data_set = Sequencer().generate(prices).normalize().to_dict()
-            self.__save(data_set, ticker)
+            self._ticker = ticker
+            self._data_set = Sequencer().generate(prices).normalize().to_dict()
+        return self
 
-    def __save(self, model_data, ticker):
-        with open(ticker_to_path(ticker), 'wb') as pickle_file:
-            pickle.dump(model_data, pickle_file)
+    def save(self):
+        with open(ticker_to_path(self._ticker), 'wb') as pickle_file:
+            pickle.dump(self._data_set, pickle_file)
 
-    def __load(self, ticker):
+    def load(self, ticker):
         with open(ticker_to_path(ticker), 'rb') as pickle_file:
-            model_data = pickle.load(pickle_file)
-            print(model_data)
+            data_set = pickle.load(pickle_file)
+            print(data_set)

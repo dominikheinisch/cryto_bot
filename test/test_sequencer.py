@@ -41,8 +41,8 @@ class TestSequencerGenerate():
 
     def run_generate(self, sequence, prices, expected_y, expected_x):
         result = Sequencer(sequence=np.asarray(sequence)).generate(np.asarray(prices)).to_dict()
-        assert np.all(result['y'] == np.asarray(expected_y))
-        assert np.all(result['x'] == np.asarray(expected_x))
+        assert np.all(result['prices_to_predict'] == np.asarray(expected_y))
+        assert np.all(result['prices'] == np.asarray(expected_x))
 
     def run_common(self, sequence):
         self.run_generate(sequence=sequence,
@@ -54,11 +54,11 @@ class TestSequencerGenerate():
 class TestSequencerNormalize():
     def test_basic(self):
         sequencer = Sequencer()
-        Y = np.asarray([PRICE_2, PRICE_3])
-        X = np.asarray([[PRICE_1, PRICE_0], [PRICE_2, PRICE_1]])
-        sequencer._y = Y.copy()
-        sequencer._x = X.copy()
+        TO_PREDICT = np.asarray([PRICE_2, PRICE_3])
+        PRICES = np.asarray([[PRICE_1, PRICE_0], [PRICE_2, PRICE_1]])
+        sequencer._prices_to_predict = TO_PREDICT.copy()
+        sequencer._prices = PRICES.copy()
         result = sequencer.normalize().to_dict()
         assert np.all(result['max_val'] == PRICE_2)
-        assert np.all(result['y'] == Y / PRICE_2)
-        assert np.all(result['x'] == X / PRICE_2)
+        assert np.all(result['prices_to_predict'] == TO_PREDICT / PRICE_2)
+        assert np.all(result['prices'] == PRICES / PRICE_2)

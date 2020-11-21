@@ -23,4 +23,4 @@ def run_puller():
 @commands_group.command()
 @click.argument('ticker')
 def prepare(ticker):
-    Preparator().prepare(ticker=ticker)
+    Preparator().prepare(ticker=ticker).save()
