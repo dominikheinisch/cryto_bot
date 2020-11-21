@@ -10,16 +10,9 @@ class Sequencer:
 
     def generate(self, prices):
         self._sequence.sort()
-        samples_begin = max(self._sequence)
-        self._y = prices[samples_begin:]
-        N = self._y.shape[0]
-        prices = prices[::-1]
-        seq = np.asarray(self._sequence)
-        x = np.zeros(shape=(N, len(seq)))
-        for i in range(N):
-            x[i] = prices[seq]
-            seq += 1
-        self._x = np.flip(x, axis=0)
+        max_index = np.amax(self._sequence)
+        self.__generate_y(prices, max_index)
+        self.__generate_x(prices, max_index)
         return self
 
     def normalize(self):
@@ -30,3 +23,13 @@ class Sequencer:
 
     def to_dict(self):
         return {'x': self._x, 'y': self._y, 'max_val': self._max_val}
+
+    def __generate_y(self, prices, max_index):
+        self._y = prices[max_index:]
+
+    def __generate_x(self, prices, max_index):
+        x_size = np.size(prices) - max_index
+        seq_size = np.size(self._sequence)
+        sequence_row = max_index - self._sequence
+        sequence_indexes = np.array([range(x_size)] * seq_size).transpose() + sequence_row
+        self._x = np.take(prices, sequence_indexes)
