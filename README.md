@@ -1,5 +1,7 @@
 # crypto_bot
 
+[![Build Status](https://github.com/dominikheinisch/cryto_bot/workflows/Python%20package/badge.svg)](https://github.com/dominikheinisch/cryto_bot/actions?query=workflow%3A"Python+package")
+
 ## 1. requirements
 ```
 pip3 install -r requirements.txt
