@@ -20,7 +20,7 @@ class MockResp():
 
 class EmptyMockResp():
     def json(self):
-        return False
+        return {}
 
 
 def test_puller(mocker: MockerFixture) -> None:

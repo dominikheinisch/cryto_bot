@@ -1,8 +1,8 @@
-from datetime import datetime
-from requests import Session
+import pandas as pd
 from time import sleep
 
 import crypto_bot.settings as settings
+from crypto_bot.puller.bitbay_api import BitbayApi
 from crypto_bot.puller.queries import Queries
 from crypto_bot.database import db
 
@@ -24,8 +24,6 @@ class Puller:
 
 
 class TickerTrades:
-    TRADES_SIZE = 50
-
     def __init__(self, queries: Queries, ticker: str):
         self._queries = queries
         self._ticker = ticker
@@ -34,11 +32,10 @@ class TickerTrades:
     def pull_trades(self):
         self.ticker_id = self._process_ticker()
         tid_since = self._get_last_transaction_tid()
-        data = self._pull_trades_batch(tid_since)
-        while data:
-            self._process(data)
-            tid_since += self.TRADES_SIZE
-            data = self._pull_trades_batch(tid_since)
+        for df in BitbayApi().get_all_trades(ticker=self._ticker, since=tid_since):
+            self._log(df.loc[0])
+            bulk = self.prepare_data_to_insert(df)
+            self._queries.insert_trade(bulk_values=bulk)
 
     def _process_ticker(self) -> int:
         ids = self._queries.select_id_by_ticker(self._ticker)
@@ -47,16 +44,14 @@ class TickerTrades:
             ids = self._queries.select_id_by_ticker(self._ticker)
         return ids[0]
 
+    def _log(self, row):
+        print(self._ticker, pd.to_datetime(row['date'], unit='s'), row.to_dict())
+
     def _get_last_transaction_tid(self) -> int:
         id = self._queries.select_last_transaction_tid(self.ticker_id)
         return id[0] if id[0] else -1
 
-    def _pull_trades_batch(self, tid_since, category='trades'):
-        data = Session().get(f'https://bitbay.net/API/Public/{self._ticker}/{category}.json?since={tid_since}')
-        return data.json()
-
-    def _process(self, data):
-        def get_trade_data(row):
-            return row['tid'], row['date'], row['price'], row['amount']
-        print(self._ticker, datetime.fromtimestamp(data[0]['date']).strftime('%Y-%m-%d %H:%M:%S'), data[0])
-        self._queries.insert_trade(bulk_values=[[*get_trade_data(row), self.ticker_id] for row in data])
+    def prepare_data_to_insert(self, df):
+        bulk = df[['tid', 'date', 'price', 'amount']]
+        bulk['ticker_id'] = self.ticker_id
+        return bulk.values.tolist()
