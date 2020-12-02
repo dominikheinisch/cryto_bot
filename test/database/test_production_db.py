@@ -1,6 +1,6 @@
 import pytest
 
-from test.queries import TestQueries
+from test.database.queries import TestQueries
 
 
 @pytest.mark.slow
