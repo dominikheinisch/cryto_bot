@@ -1,8 +1,8 @@
 import pandas as pd
 from time import sleep
+from pybitbay import BitBayAPI
 
 import crypto_bot.settings as settings
-from crypto_bot.puller.bitbay_api import BitbayApi
 from crypto_bot.puller.queries import Queries
 from crypto_bot.database import db
 
@@ -32,7 +32,7 @@ class TickerTrades:
     def pull_trades(self):
         self.ticker_id = self._process_ticker()
         tid_since = self._get_last_transaction_tid()
-        for df in BitbayApi().get_all_trades(ticker=self._ticker, since=tid_since):
+        for df in BitBayAPI().get_all_trades(ticker=self._ticker, since=tid_since):
             self._log(df.loc[0])
             bulk = self.prepare_data_to_insert(df)
             self._queries.insert_trade(bulk_values=bulk)
