@@ -6,4 +6,5 @@ pytest
 pytest-mock
 requests
 setuptools
+tensorflow
 -e git+https://github.com/dominikheinisch/pybitbay@v0.0.1#egg=pybitbay

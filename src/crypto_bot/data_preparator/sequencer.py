@@ -2,7 +2,9 @@ import numpy as np
 
 
 class Sequencer:
-    SEQUENCE = np.asarray([1, 1, 2, 3, 5, 8, 13, 21, 34, 55, 89])
+    # SEQUENCE = np.asarray([1, 2, 3, 5, 8, 13, 21, 34, 55, 89])
+    SEQUENCE = np.asarray([1, 2, 3, 4, 5])
+    # SEQUENCE = np.asarray([1, 2, 3, 4, 5, 6, 8, 10, 13, 15, 18, 21, 25, 29, 34, 40, 45, 50, 55, 65, 78, 89])
 
     def __init__(self, sequence=None):
         self._sequence = np.asarray(sequence if sequence is not None else self.SEQUENCE)
