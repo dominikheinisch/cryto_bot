@@ -1,7 +1,7 @@
 from os import path
 from time import time
 
-import crypto_bot.settings as settings
+import src.settings as settings
 
 
 def named_timer(log_name=''):

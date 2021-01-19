@@ -2,9 +2,9 @@ import pandas as pd
 from time import sleep
 from pybitbay import BitBayAPI
 
-import crypto_bot.settings as settings
-from crypto_bot.puller.queries import Queries
-from crypto_bot.database import db
+import src.settings as settings
+from src.puller.queries import Queries
+from src.database import db
 
 
 class Puller:

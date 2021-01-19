@@ -1,0 +1,17 @@
+version: "3.7"
+
+services:
+  crypto_bot:
+    build:
+      context: "./crypto_bot"
+    command: ["python3", "-u", "-m", "src", "run-puller"]
+    networks:
+     - default
+    volumes:
+     - "./db-data/:/app/db-data"
+
+networks:
+  default:
+
+volumes:
+  db-data:

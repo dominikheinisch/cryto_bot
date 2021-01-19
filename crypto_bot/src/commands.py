@@ -1,8 +1,8 @@
 import click
 
-from crypto_bot.database import db
-from crypto_bot.puller.controller import Puller
-from crypto_bot.data_preparator.preparator import Preparator
+from src.database import db
+from src.puller.controller import Puller
+from src.data_preparator.preparator import Preparator
 
 
 @click.group()
