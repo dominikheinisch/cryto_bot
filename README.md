@@ -1,6 +1,7 @@
 # crypto_bot
 
 [![Build Status](https://github.com/dominikheinisch/cryto_bot/workflows/Python%20package/badge.svg)](https://github.com/dominikheinisch/cryto_bot/actions?query=workflow%3A"Python+package")
+[![Build Status](https://github.com/dominikheinisch/cryto_bot/workflows/docker-compose%20CI/badge.svg)](https://github.com/dominikheinisch/cryto_bot/actions?query=workflow%3A%22docker-compose+CI%22")
 
 ## 1. requirements
 ```
