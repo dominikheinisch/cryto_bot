@@ -1,8 +1,8 @@
 from datetime import datetime, timezone
 from collections import namedtuple
 
-from crypto_bot.data_preparator.preparator import TradeFilter
-from crypto_bot.database.model import Trade
+from src.data_preparator.preparator import TradeFilter
+from src.database.model import Trade
 
 
 class TestTradeFilter():

@@ -1,6 +1,6 @@
 import numpy as np
 
-from crypto_bot.data_preparator.sequencer import Sequencer
+from src.data_preparator.sequencer import Sequencer
 
 PRICE_0 = 0.7
 PRICE_1 = 0.4

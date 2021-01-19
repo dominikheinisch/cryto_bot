@@ -1,8 +1,8 @@
 import pandas as pd
 from pytest_mock import MockerFixture
 
-from crypto_bot.puller.controller import Puller
-from crypto_bot.puller.queries import Queries
+from src.puller.controller import Puller
+from src.puller.queries import Queries
 
 TICKER_ID = 5
 TICKERS = ['btcpln']
@@ -21,8 +21,8 @@ EXPECTED = [
 
 
 def test_controller(mocker: MockerFixture):
-    mocker.patch('crypto_bot.puller.queries.Queries.select_id_by_ticker', return_value=[TICKER_ID])
-    mocker.patch('crypto_bot.puller.queries.Queries.select_last_transaction_tid', return_value=[-1])
+    mocker.patch('src.puller.queries.Queries.select_id_by_ticker', return_value=[TICKER_ID])
+    mocker.patch('src.puller.queries.Queries.select_last_transaction_tid', return_value=[-1])
     mocker.patch('pybitbay.BitBayAPI.get_all_trades', side_effect=[[MOCKED_DF]])
 
     queries = Queries(mocker.Mock())

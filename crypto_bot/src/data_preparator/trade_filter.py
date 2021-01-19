@@ -1,6 +1,6 @@
 import pandas as pd
 
-from crypto_bot.database.model import TRADE_FIELDS
+from src.database.model import TRADE_FIELDS
 
 
 class TradeFilter:
