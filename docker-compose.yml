@@ -9,9 +9,11 @@ services:
      - default
     volumes:
      - "./db-data/:/app/db-data"
+     - "./preprocessed-data:/app/preprocessed-data"
 
 networks:
   default:
 
 volumes:
   db-data:
+  preprocessed-data:
