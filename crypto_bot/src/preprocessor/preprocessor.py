@@ -3,11 +3,11 @@ import pickle
 from src.database import db
 from src.utils.func import named_timer, ticker_to_path
 from src.puller.queries import Queries
-from src.data_preparator.sequencer import Sequencer
-from src.data_preparator.trade_filter import TradeFilter
+from src.preprocessor.sequencer import Sequencer
+from src.preprocessor.trade_filter import TradeFilter
 
 
-class Preparator:
+class Preprocessor:
     @named_timer('data set preparation')
     def prepare(self, ticker):
         with db.get_db() as _db:

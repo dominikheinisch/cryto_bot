@@ -2,7 +2,7 @@ import click
 
 from src.database import db
 from src.puller.controller import Puller
-from src.data_preparator.preparator import Preparator
+from src.preprocessor.preprocessor import Preprocessor
 
 
 @click.group()
@@ -23,4 +23,4 @@ def run_puller():
 @commands_group.command()
 @click.argument('ticker')
 def prepare(ticker):
-    Preparator().prepare(ticker=ticker).save()
+    Preprocessor().prepare(ticker=ticker).save()

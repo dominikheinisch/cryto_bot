@@ -1,7 +1,7 @@
 from datetime import datetime, timezone
 from collections import namedtuple
 
-from src.data_preparator.preparator import TradeFilter
+from src.preprocessor.preprocessor import TradeFilter
 from src.database.model import Trade
 
 
