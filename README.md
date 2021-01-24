@@ -5,34 +5,36 @@
 
 ## 1. requirements
 ```
-pip3 install -r requirements.txt
+docker-compose version 3.7
 ```
 
 ## 2. setup
 ```
-pip3 install -e .                                         # package instalation
-pip3 show crypto_bot                                      # show package info
-python3 crypto_bot init-db
+docker-compose build
+docker-compose run crypto_bot python3 -m src init-db
 ```
 
 ## 3. data puller
 pulls data from bitbay, eg. https://bitbay.net/API/Public/btcpln/trades.json?since=0
 ```
-python3 -m crypto_bot run-puller
+docker-compose up --build
+# or
+docker-compose run crypto_bot python3 -m src run-puller
 ```
 
-## 4. data pre-processing
+## 4. data pre-processor
 ```
-python3 -m crypto_bot prepare btgpln                      # btcpln, ethpln, btgpln, etc...
+docker-compose run crypto_bot python3 -m src prepare lskpln     # btcpln, ethpln, btgpln, etc...
 ```
 
 ## 5. testing
 ```
-python3 -m pytest -vs                                     # run all
-python3 -m pytest -vs -m "not slow"                       # run all except slow tests
+docker-compose run crypto_bot pytest -v                         # run all
+docker-compose run crypto_bot pytest -v -m "not slow"           # run all except slow tests
 ```
 
-## 6. pip installation
+## 6. testing on local machine
 ```
-pip3 install -e git+https://github.com/dominikheinisch/cryto_bot@main#egg=cryto_bot
+pip3 install -r crypto_bot/requirements.txt
+python3 -m pytest -vvs crypto_bot
 ```
