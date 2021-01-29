@@ -2,6 +2,7 @@ click
 flake8
 numpy
 pandas
+psycopg2-binary
 pytest
 pytest-mock
 pytz

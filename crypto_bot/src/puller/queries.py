@@ -36,7 +36,10 @@ class Queries:
     def select_all_by_ticker(self, ticker):
         id = self.select_id_by_ticker(ticker)
         trades = self.db.execute(
-                'SELECT * FROM trades WHERE ticker_id = (?) ORDER BY tid ASC',
-                [id[0]]
-            ).fetchall()
+            'SELECT id, tid, ticker_id, date_, price, amount '
+            'FROM trades '
+            'WHERE ticker_id = (?) '
+            'ORDER BY tid ASC',
+            [id[0]]
+        ).fetchall()
         return [Trade(*row) for row in trades]

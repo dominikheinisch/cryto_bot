@@ -2,9 +2,9 @@ name: docker-compose CI
 
 on:
   push:
-    branches: [ main, docker ]
+    branches: [ main, postgres ]
   pull_request:
-    branches: [ main, docker ]
+    branches: [ main, postgres ]
 
 jobs:
 

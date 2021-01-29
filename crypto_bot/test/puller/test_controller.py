@@ -2,7 +2,7 @@ import pandas as pd
 from pytest_mock import MockerFixture
 
 from src.puller.controller import Puller
-from src.puller.queries import Queries
+from src.database.queries import Queries
 
 TICKER_ID = 5
 TICKERS = ['btcpln']
@@ -21,11 +21,13 @@ EXPECTED = [
 
 
 def test_controller(mocker: MockerFixture):
-    mocker.patch('src.puller.queries.Queries.select_id_by_ticker', return_value=[TICKER_ID])
-    mocker.patch('src.puller.queries.Queries.select_last_transaction_tid', return_value=[-1])
+    mocker.patch('src.database.pg_connector.PgConnector.__init__', return_value=None)
+    mocker.patch('src.database.queries.Queries.select_id_by_ticker', return_value=[TICKER_ID])
+    mocker.patch('src.database.queries.Queries.select_last_transaction_tid', return_value=[-1])
     mocker.patch('pybitbay.BitBayAPI.get_all_trades', side_effect=[[MOCKED_DF]])
 
-    queries = Queries(mocker.Mock())
+    queries = Queries()
+    queries.conn = mocker.Mock()
     spy = mocker.spy(queries, 'insert_trade')
 
     Puller()._pull_trades(queries, tickers=TICKERS)

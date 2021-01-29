@@ -1,8 +1,9 @@
 import pickle
 
 from src.database import db
+from src.database.queries import Queries
 from src.utils.func import named_timer, ticker_to_path
-from src.puller.queries import Queries
+from src.puller.queries import Queries as SQLiteQueries
 from src.preprocessor.sequencer import Sequencer
 from src.preprocessor.trade_filter import TradeFilter
 
@@ -10,8 +11,16 @@ from src.preprocessor.trade_filter import TradeFilter
 class Preprocessor:
     @named_timer('data set preparation')
     def prepare(self, ticker):
+        queries = Queries()
+        prices = TradeFilter().filter(queries.select_all_by_ticker(ticker))
+        self._ticker = ticker
+        self._data_set = Sequencer().generate(prices).normalize().to_dict()
+        return self
+
+    @named_timer('data set preparation')
+    def prepare_sqlite(self, ticker):
         with db.get_db() as _db:
-            queries = Queries(_db)
+            queries = SQLiteQueries(_db)
             prices = TradeFilter().filter(queries.select_all_by_ticker(ticker))
             self._ticker = ticker
             self._data_set = Sequencer().generate(prices).normalize().to_dict()

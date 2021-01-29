@@ -5,11 +5,30 @@ services:
     build:
       context: "./crypto_bot"
     command: ["python3", "-u", "-m", "src", "run-puller"]
+    depends_on:
+     - "db"
+    environment:
+     - PG_HOST=db
+     - PG_USER=postgres
+     - PG_PASSWORD=postgres
     networks:
      - default
     volumes:
-     - "./db-data/:/app/db-data"
+     - "./sqlite:/app/db-data"
      - "./preprocessed-data:/app/preprocessed-data"
+
+  db:
+    build:
+      context: "./db"
+    environment:
+     - POSTGRES_USER=postgres
+     - POSTGRES_PASSWORD=postgres
+    networks:
+      - default
+    ports:
+     - "5430:5432"
+    volumes:
+     - "./db-data/:/var/lib/postgresql/data"
 
 networks:
   default:

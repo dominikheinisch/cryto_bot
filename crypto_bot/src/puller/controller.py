@@ -3,14 +3,24 @@ from time import sleep
 from pybitbay import BitBayAPI
 
 import src.settings as settings
-from src.puller.queries import Queries
+from src.puller.queries import Queries as SQLiteQueries
 from src.database import db
+from src.database.queries import Queries
 
 
 class Puller:
     def run(self, tickers=settings.TICKERS):
+        queries = Queries()
+        while True:
+            try:
+                self._pull_trades(queries, tickers)
+                sleep(30)
+            except Exception as e:
+                print(e)
+
+    def run_sqlite(self, tickers=settings.TICKERS):
         with db.get_db() as _db:
-            queries = Queries(_db)
+            queries = SQLiteQueries(_db)
             while True:
                 try:
                     self._pull_trades(queries, tickers)
