@@ -12,6 +12,11 @@ class Queries:
             [ticker]
         ).fetchone()
 
+    def select_all_from_tickers(self):
+        return self.db.execute(
+            'SELECT id, ticker FROM tickers',
+        ).fetchall()
+
     def insert_ticker(self, ticker, is_synthetic=0):
         self.db.execute(
             'INSERT INTO tickers (ticker, is_synthetic) VALUES (?, ?)',

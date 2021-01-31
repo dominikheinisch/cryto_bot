@@ -3,7 +3,7 @@ from time import sleep
 from pybitbay import BitBayAPI
 
 import src.settings as settings
-from src.puller.queries import Queries as SQLiteQueries
+from src.puller.queries import Queries as SqliteQueries
 from src.database import db
 from src.database.model import TRADE_FIELDS
 from src.database.queries import Queries
@@ -21,7 +21,7 @@ class Puller:
 
     def run_sqlite(self, tickers=settings.TICKERS):
         with db.get_db() as _db:
-            queries = SQLiteQueries(_db)
+            queries = SqliteQueries(_db)
             while True:
                 try:
                     self._pull_trades(queries, tickers)
