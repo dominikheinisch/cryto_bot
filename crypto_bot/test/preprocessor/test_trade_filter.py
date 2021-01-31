@@ -42,7 +42,9 @@ def run(input, result):
 
 
 def get_fake_trade(dtime: str, price: float):
-    return TradePrice(Trade(id=0, tid=0, ticker_id=0, datetime=datetime_from_str(dtime), price=price, amount=0), price)
+    return TradePrice(
+        Trade(id=0, tid=0, ticker_id=0, created_at=datetime_from_str(dtime), price=price, amount=0), price,
+    )
 
 
 def datetime_from_str(dtime: str) -> int:

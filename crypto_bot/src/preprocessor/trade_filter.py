@@ -17,10 +17,10 @@ class TradeFilter:
     def filter(self, trades):
         self.assert_input()
         df = pd.DataFrame(trades, columns=TRADE_FIELDS)
-        df['datetime'] = self.__align_datetime(df)
+        df['created_at'] = self.__align_datetime(df)
         df['category'] = self.__create_category(df)
-        df['datetime'] = df['datetime'].dt.floor('d')
-        return df.groupby(['datetime', 'category']).first()['price'].values
+        df['created_at'] = df['created_at'].dt.floor('d')
+        return df.groupby(['created_at', 'category']).first()['price'].values
 
     def assert_input(self):
         assert self.__MIN_HOUR < self.__threshold_hour <= self.__MAX_HOUR
@@ -29,11 +29,11 @@ class TradeFilter:
 
     def __create_category(self, df):
         return pd.cut(
-            x=df['datetime'].dt.hour,
+            x=df['created_at'].dt.hour,
             bins=list(range(self.__MIN_HOUR, self.__MAX_HOUR, self.__batch_threshold)),
             labels=range(self.__MAX_HOUR // self.__batch_threshold)
         ).astype(int)
 
     def __align_datetime(self, df):
         threshold = pd.to_timedelta(self.__threshold_hour, unit='h')
-        return pd.to_datetime(df['datetime'], unit='s') - threshold
+        return pd.to_datetime(df['created_at'], unit='s') - threshold

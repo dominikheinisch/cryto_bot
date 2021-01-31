@@ -22,7 +22,7 @@ class Queries:
 
     def insert_trade(self, bulk_values):
         self.conn.executemany(
-            query='INSERT INTO trades (tid, date, price, amount, ticker_id) VALUES (%s, %s, %s, %s ,%s)',
+            query='INSERT INTO trades (tid, created_at, price, amount, ticker_id) VALUES (%s, %s, %s, %s ,%s)',
             vars_list=([*values] for values in bulk_values),
         )
 
@@ -37,7 +37,7 @@ class Queries:
     def select_all_by_ticker(self, ticker):
         id = self.select_id_by_ticker(ticker)
         trades = self.conn.execute(
-            query='SELECT id, tid, ticker_id, date, price, amount '
+            query='SELECT id, tid, ticker_id, created_at, price, amount '
                   'FROM trades '
                   'WHERE ticker_id = %s '
                   'ORDER BY tid ASC ',

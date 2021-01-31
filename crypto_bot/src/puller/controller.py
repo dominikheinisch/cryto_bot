@@ -63,5 +63,7 @@ class TickerTrades:
 
     def prepare_data_to_insert(self, df):
         bulk = df[['tid', 'date', 'price', 'amount']]
+        # TODO rename date to created_at [BitBayAPI]
+        bulk.columns = ('tid', 'created_at', 'price', 'amount')
         bulk['ticker_id'] = self.ticker_id
         return bulk.values.tolist()
