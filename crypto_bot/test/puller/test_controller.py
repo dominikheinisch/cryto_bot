@@ -16,7 +16,7 @@ MOCKED_DF = pd.DataFrame(
     columns=COLUMNS
 )
 EXPECTED = [
-    [row['tid'], row['date'], row['price'], row['amount'], TICKER_ID] for row in JSON_DATA
+    [row['tid'], TICKER_ID, row['date'], row['price'], row['amount']] for row in JSON_DATA
 ]
 
 
@@ -28,7 +28,7 @@ def test_controller(mocker: MockerFixture):
 
     queries = Queries()
     queries.conn = mocker.Mock()
-    spy = mocker.spy(queries, 'insert_trade')
+    spy = mocker.spy(queries, 'insert_trades')
 
     Puller()._pull_trades(queries, tickers=TICKERS)
     spy.assert_called_once_with(bulk_values=EXPECTED)

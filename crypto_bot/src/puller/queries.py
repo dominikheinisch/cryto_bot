@@ -19,9 +19,9 @@ class Queries:
         )
         self.db.commit()
 
-    def insert_trade(self, bulk_values):
+    def insert_trades(self, bulk_values):
         self.db.executemany(
-            'INSERT INTO trades (tid, date_, price, amount, ticker_id) VALUES (?, ?, ?, ?, ?)',
+            'INSERT INTO trades (tid, ticker_id, date_, price, amount) VALUES (?, ?, ?, ?, ?)',
             [[*values] for values in bulk_values]
         )
         self.db.commit()

@@ -20,9 +20,9 @@ class Queries:
             vars=(ticker,),
         )
 
-    def insert_trade(self, bulk_values):
+    def insert_trades(self, bulk_values):
         self.conn.executemany(
-            query='INSERT INTO trades (tid, created_at, price, amount, ticker_id) VALUES (%s, %s, %s, %s ,%s)',
+            query='INSERT INTO trades (tid, ticker_id, created_at, price, amount) VALUES (%s, %s, %s, %s ,%s)',
             vars_list=([*values] for values in bulk_values),
         )
 

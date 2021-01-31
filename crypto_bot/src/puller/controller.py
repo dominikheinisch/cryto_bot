@@ -5,6 +5,7 @@ from pybitbay import BitBayAPI
 import src.settings as settings
 from src.puller.queries import Queries as SQLiteQueries
 from src.database import db
+from src.database.model import TRADE_FIELDS
 from src.database.queries import Queries
 
 
@@ -45,7 +46,7 @@ class TickerTrades:
         for df in BitBayAPI().get_all_trades(ticker=self._ticker, since=tid_since):
             self._log(df.loc[0])
             bulk = self.prepare_data_to_insert(df)
-            self._queries.insert_trade(bulk_values=bulk)
+            self._queries.insert_trades(bulk_values=bulk)
 
     def _process_ticker(self) -> int:
         ids = self._queries.select_id_by_ticker(self._ticker)
@@ -61,9 +62,15 @@ class TickerTrades:
         id = self._queries.select_last_transaction_tid(self.ticker_id)
         return id[0] if id[0] else -1
 
+    def _reorder_columns(self, df):
+        df = df[TRADE_FIELDS[1:]]
+        return df
+
     def prepare_data_to_insert(self, df):
         bulk = df[['tid', 'date', 'price', 'amount']]
         # TODO rename date to created_at [BitBayAPI]
         bulk.columns = ('tid', 'created_at', 'price', 'amount')
+        # ODOT
         bulk['ticker_id'] = self.ticker_id
+        bulk = self._reorder_columns(df=bulk)
         return bulk.values.tolist()
