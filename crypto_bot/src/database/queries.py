@@ -14,6 +14,12 @@ class Queries:
             func=lambda cursor: cursor.fetchone,
         )
 
+    def insert_tickers(self, bulk_values):
+        return self.conn.executemany(
+            query='INSERT INTO tickers (id, ticker) VALUES (%s, %s)',
+            vars_list=([*values] for values in bulk_values),
+        )
+
     def insert_ticker(self, ticker, is_synthetic=0):
         self.conn.execute(
             query='INSERT INTO tickers (ticker) VALUES (%s)',
