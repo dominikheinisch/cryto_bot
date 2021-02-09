@@ -1,6 +1,3 @@
---DROP TABLE IF EXISTS tickers;
---DROP TABLE IF EXISTS trades;
-
 CREATE TABLE IF NOT EXISTS tickers (
   id SERIAL PRIMARY KEY,
   ticker VARCHAR(6) UNIQUE NOT NULL
@@ -17,4 +14,10 @@ CREATE TABLE IF NOT EXISTS trades (
     FOREIGN KEY(ticker_id)
     REFERENCES tickers(id)
     ON DELETE SET NULL
+);
+
+CREATE INDEX IF NOT EXISTS trade_index ON trades
+(
+    ticker_id ASC,
+	tid ASC
 );
