@@ -7,6 +7,7 @@ from src.puller.queries import Queries as SqliteQueries
 from src.database import db
 from src.database.model import TRADE_FIELDS
 from src.database.queries import Queries
+from src.utils.logger import get_logger
 
 
 class Puller:
@@ -37,6 +38,7 @@ class Puller:
 class TickerTrades:
     def __init__(self, queries: Queries, ticker: str):
         self._queries = queries
+        self._logger = get_logger()
         self._ticker = ticker
         self.ticker_id = None
 
@@ -56,6 +58,7 @@ class TickerTrades:
         return ids[0]
 
     def _log(self, row):
+        self._logger.info(', '.join(map(str, [self._ticker, pd.to_datetime(row['date'], unit='s'), row.to_dict()])))
         print(self._ticker, pd.to_datetime(row['date'], unit='s'), row.to_dict())
 
     def _get_last_transaction_tid(self) -> int:

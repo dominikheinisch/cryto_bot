@@ -15,6 +15,7 @@ services:
      - default
     volumes:
      - "./sqlite:/app/db-data"
+     - "./logs:/app/logs"
      - "./preprocessed-data:/app/preprocessed-data"
 
   db:
@@ -35,4 +36,5 @@ networks:
 
 volumes:
   db-data:
+  logs:
   preprocessed-data:

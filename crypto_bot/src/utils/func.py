@@ -16,4 +16,4 @@ def named_timer(log_name=''):
 
 
 def ticker_to_path(ticker: str) -> str:
-    return path.join(settings.Preprocessor.PATCH, f'{ticker}.pkl')
+    return path.join(settings.Paths.PREPROCESSOR, f'{ticker}.pkl')
