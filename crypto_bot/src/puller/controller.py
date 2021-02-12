@@ -14,11 +14,8 @@ class Puller:
     def run(self, tickers=settings.TICKERS):
         queries = Queries()
         while True:
-            try:
-                self._pull_trades(queries, tickers)
-                sleep(30)
-            except Exception as e:
-                print(e)
+            self._pull_trades(queries, tickers)
+            sleep(10)
 
     def run_sqlite(self, tickers=settings.TICKERS):
         with db.get_db() as _db:

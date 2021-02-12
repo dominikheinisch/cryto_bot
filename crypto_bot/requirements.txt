@@ -8,4 +8,4 @@ pytest-mock
 pytz
 requests
 setuptools
--e git+https://github.com/dominikheinisch/pybitbay@v0.0.1#egg=pybitbay
+-e git+https://github.com/dominikheinisch/pybitbay@v0.1.1#egg=pybitbay
