@@ -14,9 +14,9 @@ services:
     networks:
      - default
     volumes:
-     - "./sqlite:/app/db-data"
-     - "./logs:/app/logs"
-     - "./preprocessed-data:/app/preprocessed-data"
+     - "./volumes/sqlite:/app/db-data"
+     - "./volumes/logs:/app/logs"
+     - "./volumes/preprocessed-data:/app/preprocessed-data"
 
   db:
     build:
@@ -29,12 +29,4 @@ services:
     ports:
      - "5430:5432"
     volumes:
-     - "./db-data/:/var/lib/postgresql/data"
-
-networks:
-  default:
-
-volumes:
-  db-data:
-  logs:
-  preprocessed-data:
+     - "./volumes/db-data/:/var/lib/postgresql/data"
