@@ -1,12 +1,18 @@
 import pytest
-from os import path
+from psycopg2 import OperationalError
 
-import src.settings as settings
-from src.database.db import get_db
+from src.database.pg_connector import PgConnector
 
 
 @pytest.fixture
-def production_db():
-    if not path.isfile(settings.Database.PATH):
-        pytest.skip(f'no such file: {settings.Database.PATH}')
-    return get_db()
+def production_db_conn():
+    try:
+        conn = PgConnector()
+    except OperationalError as e:
+        print(e)
+        pytest.xfail('no connection to db')
+    except KeyError as e:
+        if 'PG_HOST' in e.args:
+            print(e)
+            pytest.xfail('no required environment variable')
+    return conn
