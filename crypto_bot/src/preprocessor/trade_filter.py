@@ -8,7 +8,7 @@ class TradeFilter:
     _BATCH_THRESHOLD = 24
     __MIN_HOUR = -1
     __MAX_HOUR = 24
-    __ACCETED_BATCH_THRESHOLD = [1, 2, 3, 4, 6, 8, 12, 24]
+    __ACCEPTED_BATCH_THRESHOLD = [1, 2, 3, 4, 6, 8, 12, 24]
 
     def __init__(self, threshold_hour_utc=None, batch_threshold=None):
         self.__threshold_hour = threshold_hour_utc if threshold_hour_utc else self._TRADE_HOUR_UTC
@@ -25,7 +25,7 @@ class TradeFilter:
     def assert_input(self):
         assert self.__MIN_HOUR < self.__threshold_hour <= self.__MAX_HOUR
         assert isinstance(self.__batch_threshold, int)
-        assert self.__batch_threshold in self.__ACCETED_BATCH_THRESHOLD
+        assert self.__batch_threshold in self.__ACCEPTED_BATCH_THRESHOLD
 
     def __create_category(self, df):
         return pd.cut(
