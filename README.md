@@ -9,9 +9,9 @@ docker-compose version 3.7
 ```
 
 ## 2. setup
+create required volumes and initialize database
 ```
-docker-compose build
-docker-compose run crypto_bot python3 -m src init-db
+docker-compose up --build
 ```
 
 ## 3. data puller

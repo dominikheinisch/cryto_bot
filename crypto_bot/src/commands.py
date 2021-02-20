@@ -1,7 +1,5 @@
 import click
 
-from src.database import db
-from src.migration.migration import Migration
 from src.puller.controller import Puller
 from src.preprocessor.preprocessor import Preprocessor
 
@@ -9,11 +7,6 @@ from src.preprocessor.preprocessor import Preprocessor
 @click.group()
 def commands_group():
     pass
-
-
-@commands_group.command()
-def init_db():
-    db.init_db()
 
 
 @commands_group.command()
@@ -25,8 +18,3 @@ def run_puller():
 @click.argument('ticker')
 def prepare(ticker):
     Preprocessor().prepare(ticker=ticker).save()
-
-
-@commands_group.command()
-def migration():
-    Migration().sqlite_to_postgres()
