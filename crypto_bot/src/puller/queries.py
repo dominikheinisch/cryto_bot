@@ -48,3 +48,17 @@ class Queries:
             [id[0]]
         ).fetchall()
         return [Trade(*row) for row in trades]
+
+    @named_timer('fetching all by ticker')
+    def select_all_by_ticker_limited(self, ticker, limit, offset):
+        id = self.select_id_by_ticker(ticker)
+        trades = self.db.execute(
+            'SELECT id, tid, ticker_id, date_, price, amount '
+            'FROM trades '
+            'WHERE ticker_id = (?) '
+            'ORDER BY tid ASC '
+            'LIMIT (?) '
+            'OFFSET (?) ',
+            [id[0], limit, offset]
+        ).fetchall()
+        return [Trade(*row) for row in trades]

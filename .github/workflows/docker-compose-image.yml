@@ -34,6 +34,6 @@ jobs:
     - name: Compose build
       run: docker-compose build
     - name: Run test
-      run: docker-compose run crypto_bot pytest -v
+      run: docker-compose run crypto_bot pytest -vs
     - name: Compose down
       run: docker-compose down
