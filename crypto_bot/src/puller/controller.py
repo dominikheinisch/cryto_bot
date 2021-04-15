@@ -3,7 +3,6 @@ from time import sleep
 from pybitbay import BitBayAPI
 
 import src.settings as settings
-from src.database.model import TRADE_FIELDS
 from src.database.queries import Queries
 from src.utils.logger import get_logger
 
@@ -32,7 +31,7 @@ class TickerTrades:
         tid_since = self._get_last_transaction_tid()
         for df in BitBayAPI().get_all_trades(ticker=self._ticker, since=tid_since):
             self._log(df.loc[0])
-            bulk = self.prepare_data_to_insert(df)
+            bulk = self._prepare_data_to_insert(df)
             self._queries.insert_trades(bulk_values=bulk)
 
     def _process_ticker(self) -> int:
@@ -50,15 +49,8 @@ class TickerTrades:
         id = self._queries.select_last_transaction_tid(self.ticker_id)
         return id[0] if id[0] else -1
 
-    def _reorder_columns(self, df):
-        df = df[TRADE_FIELDS[1:]]
-        return df
-
-    def prepare_data_to_insert(self, df):
+    def _prepare_data_to_insert(self, df):
         bulk = df[['tid', 'date', 'price', 'amount']]
-        # TODO rename date to created_at [BitBayAPI]
-        bulk.columns = ('tid', 'created_at', 'price', 'amount')
-        # ODOT
-        bulk['ticker_id'] = self.ticker_id
-        bulk = self._reorder_columns(df=bulk)
+        bulk.insert(loc=1, column='ticker_id', value=self.ticker_id)
+        bulk.rename(columns={'date': 'created_at'}, inplace=True)
         return bulk.values.tolist()
